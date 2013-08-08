@@ -23,20 +23,18 @@ class Node {
   public: 
     Node(char *l);
     ~Node();
-
     void print();
-
     void addEdge(Node *n, int);
     void removeEdge(Node *n);
     int getEdgeCost(Node *n);
     int getEdgeCount();
-
-    void setLabel();
+    void setLabel(char *l);
     char* getLabel();
     static int count();
 
   private:
     Node();
+    bool isNodeInEdgeList(Node *n);
 
 };
 

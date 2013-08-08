@@ -17,6 +17,7 @@ Node::~Node() {
     delete [] outboundEdges[i];
   }
 
+  // TODO destroy each edge
   // destroy edges array
   delete [] outboundEdges;
 
@@ -29,12 +30,12 @@ Node::~Node() {
 }
 
 /* Create a new node */
-Node::Node(char *label) {
-
+Node::Node(char *setlabel) {
+  
   // add a label or set default 
   try {
-    if (label == 0) throw 0;
-    label = label;
+    if (setlabel == 0) throw 0;
+    label = setlabel;
   } catch (int i) {
     label = "UNLABELED";
   }
@@ -50,42 +51,81 @@ Node::Node(char *label) {
 
 }
 
+/* private helper method to find if a given
+ * node is already in an outbound edge
+ */
+bool Node::isNodeInEdgeList(Node *node) {
+  
+  if (node == 0) {
+    // TODO throw exception
+  }
+  
+  bool inList = false; 
+
+  for(int i = 0; i < edgeCount; i++) {
+    if (outboundEdges[i]->destination == node) {
+      inList = true;
+    } 
+  }
+
+  return inList;
+  
+}
+
 /* Add an edge to a node. If an edge already exists, update the cost 
- * TODO: there can only be one edge per node pair
+ * there can only be one edge per node pair
  */
 void Node::addEdge(Node *node, int cost = 0) {
   
-  // the new edge
-  Edge *e = new Edge();
-  
-  // add details and handle null ptr 
-  try { 
-    if (node == 0) throw 0;
+  if (node == 0) {
+    // TODO throw exception
+  }
+
+  // determine if node already exists as an edge
+  if (!isNodeInEdgeList(node)) {
+
+    // the new edge
+    Edge *e = new Edge();
+    
+    // add details and handle null ptr 
     e->cost = cost;
     e->destination = node;
-  } catch (int i) {
-    printf("Must specify a valid node in edge creation.\n");
+
+    // create new, bigger edges list
+    Edge **newEdgesList = new Edge*[edgeCount+1];
+
+    // copy over the old edge list
+    for(int i = 0; i < edgeCount; i++) {
+      newEdgesList[i] = outboundEdges[i];
+    }
+
+    // add the new edge
+    newEdgesList[edgeCount++] = e;
+
+    // update edges list with the new one
+    // TODO destroy each edge
+    delete [] outboundEdges;
+    outboundEdges = newEdgesList;
+
+  } else {
+
+    // if node was already in list, just update its cost
+    for(int i = 0; i < edgeCount; i++) {
+      if (outboundEdges[i]->destination == node) {
+        outboundEdges[i]->cost = cost;
+      }
+    }
+
   }
 
-  // create new, bigger edges list
-  Edge **newEdgesList = new Edge*[edgeCount+1];
-
-  // copy over the old edge list
-  for(int i = 0; i < edgeCount; i++) {
-    newEdgesList[i] = outboundEdges[i];
-  }
-
-  // add the new edge
-  newEdgesList[edgeCount++] = e;
-
-  // update edges list with the new one
-  delete [] outboundEdges;
-  // TODO and items
-  outboundEdges = newEdgesList;
 }
 
 /* Clear an edge given the destination node */
 void Node::removeEdge(Node *node) {
+
+  if (node == 0 || !isNodeInEdgeList(node)) {
+    // TODO throw exception
+  }
 
   // create new, smaller edges list
   Edge **newEdgesList = new Edge*[edgeCount-1];
@@ -95,7 +135,9 @@ void Node::removeEdge(Node *node) {
   for(int i = 0; i < edgeCount; i++) {
 
     if (outboundEdges[i]->destination != node) {
-      if(newIndex < edgeCount-1) {newEdgesList[newIndex++] = outboundEdges[i];}
+      if(newIndex < edgeCount-1) {
+        newEdgesList[newIndex++] = outboundEdges[i];
+      }
     } else { removed = 1; }
 
   }
@@ -103,8 +145,8 @@ void Node::removeEdge(Node *node) {
   if (removed == 1) {
 
     // update edges list with the new one
+    // TODO destroy each edge
     delete [] outboundEdges;
-    // TODO and items
     outboundEdges = newEdgesList;
 
     // update edge count
@@ -113,8 +155,8 @@ void Node::removeEdge(Node *node) {
   } else {
 
     // delete new list items and list
+    // TODO destroy each edge
     delete [] newEdgesList;
-    // TODO and items
 
   }
 
@@ -123,6 +165,10 @@ void Node::removeEdge(Node *node) {
 /* return cost of an edge to specified node */
 int Node::getEdgeCost(Node *node) {
   
+  if (node == 0 || !isNodeInEdgeList(node)) {
+    // TODO throw exception
+  }
+
   int cost = 0;
 
   for(int i = 0; i < edgeCount; i++) {
@@ -138,5 +184,36 @@ int Node::getEdgeCost(Node *node) {
 int Node::getEdgeCount() {
   
   return edgeCount;
+
+}
+
+/* set label of a node */
+void Node::setLabel(char *setlabel) {
+
+  if (setlabel == 0) {
+    // TODO throw exception
+  }
+
+  // add a label or set default 
+  label = setlabel;
+
+}
+
+/* return node label */
+char* Node::getLabel() {
+
+  return label;
+
+}
+
+/* pretty print the node and its properties */
+void Node::print() {
+
+  printf("%i Edge(s) from node %s\n", edgeCount, label);
+  for(int i = 0; i < edgeCount; i++) {
+    printf("  ---- (cost: %i) ---> %s\n", 
+      outboundEdges[i]->cost, 
+      outboundEdges[i]->destination->getLabel());
+  }
 
 }
