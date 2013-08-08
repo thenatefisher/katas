@@ -1,6 +1,7 @@
 #include "stdio.h"
 #include "gtest/gtest.h"
 #include "Node.h"
+#include "vector.h"
 
 // fwd declare prototype
 int dijkstra(Node *origin, Node *dest, Node **path);
@@ -37,6 +38,16 @@ TEST(Dijkstra, dijkstra) {
 
 }
 
+
+/* augemnting the node class a bit for the algorithm */
+struct dNode {
+    Node *node;
+    Node *tfrom;
+    int tcost;
+    bool visited;
+  };
+  
+
 /* Dijkstra's Algorithm
  *
  *  Given an origina and dest, find the cheapest
@@ -44,22 +55,31 @@ TEST(Dijkstra, dijkstra) {
  *  entered in the specified path location and the total cost via
  *  this route returned. 
  *
- */
+ */ 
 int dijkstra(Node *origin, Node *dest, Node **path) {
 
-  struct dNode {
-    Node *node;
-    Node *tfrom;
-    int tcost;
-    bool visited;
-  };
+  std::vector<dNode> nodeList;
 
-  dNode **nodeList;
-
+  // convert origin and dest to dNode types
+  sNode dn_origin, dn_dest;
+  dn_origin.node = origin;
+  dn_dest.node = dest;
 
   // 1 init nodeList with origin
+  nodeList.push_back(dn_origin);
 
   // 2 find node in nodeList with cheapest tcost, set as current node 
+  dNode cnode;
+  for (vector<dNode>::iterator node = nodeList.begin(); node != nodeList.end(); ++node) {
+      if (!cnode) {
+        cnode = node;
+      } else if () {
+        //
+      } else if (cnode->tcost > node->tcost) {
+        cnode = node;
+      }
+  }
+
 
     // stop if cnode == dest
 
