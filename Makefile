@@ -23,11 +23,11 @@ USER_DIR = src
 CPPFLAGS += -I$(GTEST_DIR)/include
 
 # Flags passed to the C++ compiler.
-CXXFLAGS += -g -Wall -Wextra
+CXXFLAGS += -g -Wall -Wextra 
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-TESTS = kata_test
+TESTS = node_test dijkstra_test
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -69,16 +69,19 @@ gtest_main.a: gtest-all.o gtest_main.o
 # gtest_main.a, depending on whether it defines its own main()
 # function.
 
-#kata.o: $(USER_DIR)/kata.cpp
-#	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/kata.cpp
-
 Node.o: $(USER_DIR)/Node.cpp $(USER_DIR)/Node.h
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/Node.cpp
 
 Node_test.o: $(USER_DIR)/Node_test.cpp $(USER_DIR)/Node.h $(GTEST_HEADERS)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/Node_test.cpp
 
-kata_test: Node.o Node_test.o gtest_main.a
+dijkstra_test.o: $(USER_DIR)/dijkstra_test.cpp $(USER_DIR)/Node.h $(GTEST_HEADERS)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/dijkstra_test.cpp
+
+dijkstra_test: Node.o dijkstra_test.o gtest_main.a
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+
+node_test: Node.o Node_test.o gtest_main.a
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
 
 
