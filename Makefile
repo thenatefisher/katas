@@ -17,17 +17,20 @@
 GTEST_DIR = /home/nate/Downloads/gtest-1.6.0
 
 # Where to find user code.
-USER_DIR = src
+SRC_DIR = src
+
+# location of output files
+BUILD_DIR = build
 
 # Flags passed to the preprocessor.
 CPPFLAGS += -I$(GTEST_DIR)/include
 
 # Flags passed to the C++ compiler.
-CXXFLAGS += -g -Wall -Wextra 
+CXXFLAGS += -g -Wall -Wextra
 
 # All tests produced by this Makefile.  Remember to add new tests you
 # created to the list.
-TESTS = node_test dijkstra_test
+TESTS = $(BUILD_DIR)/node_test $(BUILD_DIR)/dijkstra_test
 
 # All Google Test headers.  Usually you shouldn't change this
 # definition.
@@ -37,6 +40,8 @@ GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
 # House-keeping build targets.
 
 all: $(TESTS)
+
+# remove all binaries
 
 clean:
 	rm -f $(TESTS) gtest.a gtest_main.a *.o
@@ -51,35 +56,38 @@ GTEST_SRCS_ = $(GTEST_DIR)/src/*.cc $(GTEST_DIR)/src/*.h $(GTEST_HEADERS)
 # implementation details, the dependencies specified below are
 # conservative and not optimized.  This is fine as Google Test
 # compiles fast and for ordinary users its source rarely changes.
-gtest-all.o: $(GTEST_SRCS_)
-	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c \
-            $(GTEST_DIR)/src/gtest-all.cc
+$(BUILD_DIR)/gtest-all.o: $(GTEST_SRCS_) | $(BUILD_DIR)
+	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c $(GTEST_DIR)/src/gtest-all.cc -o $@
 
-gtest_main.o: $(GTEST_SRCS_)
-	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c \
-            $(GTEST_DIR)/src/gtest_main.cc
+$(BUILD_DIR)/gtest_main.o: $(GTEST_SRCS_) | $(BUILD_DIR)
+	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c $(GTEST_DIR)/src/gtest_main.cc -o $@
 
-gtest.a: gtest-all.o
-	$(AR) $(ARFLAGS) $@ $^
+$(BUILD_DIR)/gtest.a: $(BUILD_DIR)/gtest-all.o | $(BUILD_DIR)
+	$(AR) $(ARFLAGS) $@ $^ 
 
-gtest_main.a: gtest-all.o gtest_main.o
+$(BUILD_DIR)/gtest_main.a: $(BUILD_DIR)/gtest-all.o $(BUILD_DIR)/gtest_main.o | $(BUILD_DIR)
 	$(AR) $(ARFLAGS) $@ $^
 
 # Builds a sample test.  A test should link with either gtest.a or
 # gtest_main.a, depending on whether it defines its own main()
 # function.
 
-Node.o: $(USER_DIR)/Node.cpp $(USER_DIR)/Node.h
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/Node.cpp
+$(BUILD_DIR)/Node.o: $(SRC_DIR)/Node.cpp $(SRC_DIR)/Node.h | $(BUILD_DIR)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(SRC_DIR)/Node.cpp -o $@
 
-Node_test.o: $(USER_DIR)/Node_test.cpp $(USER_DIR)/Node.h $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/Node_test.cpp
+$(BUILD_DIR)/Node_test.o: $(SRC_DIR)/Node_test.cpp $(SRC_DIR)/Node.h $(GTEST_HEADERS) | $(BUILD_DIR)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(SRC_DIR)/Node_test.cpp -o $@
 
-dijkstra_test.o: $(USER_DIR)/dijkstra_test.cpp $(USER_DIR)/Node.h $(GTEST_HEADERS)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(USER_DIR)/dijkstra_test.cpp
+$(BUILD_DIR)/dijkstra_test.o: $(SRC_DIR)/dijkstra_test.cpp $(SRC_DIR)/Node.h $(GTEST_HEADERS) | $(BUILD_DIR)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(SRC_DIR)/dijkstra_test.cpp -o $@
 
-dijkstra_test: Node.o dijkstra_test.o gtest_main.a
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+$(BUILD_DIR)/dijkstra_test: $(BUILD_DIR)/Node.o $(BUILD_DIR)/dijkstra_test.o $(BUILD_DIR)/gtest_main.a | $(BUILD_DIR)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -pthread $^ -o $@
 
-node_test: Node.o Node_test.o gtest_main.a
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -lpthread $^ -o $@
+$(BUILD_DIR)/node_test: $(BUILD_DIR)/Node.o $(BUILD_DIR)/Node_test.o $(BUILD_DIR)/gtest_main.a | $(BUILD_DIR)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -pthread $^ -o $@
+
+# put everything in a separate build directory
+
+$(BUILD_DIR): 
+	mkdir -p $@
