@@ -1,7 +1,7 @@
 #include "stdio.h"
 #include "gtest/gtest.h"
 #include "Node.h"
-#include "vector.h"
+#include <vector>
 
 // fwd declare prototype
 int dijkstra(Node *origin, Node *dest, Node **path);
@@ -61,7 +61,7 @@ int dijkstra(Node *origin, Node *dest, Node **path) {
   std::vector<dNode> nodeList;
 
   // convert origin and dest to dNode types
-  sNode dn_origin, dn_dest;
+  dNode dn_origin, dn_dest;
   dn_origin.node = origin;
   dn_dest.node = dest;
 
@@ -70,7 +70,8 @@ int dijkstra(Node *origin, Node *dest, Node **path) {
 
   // 2 find node in nodeList with cheapest tcost, set as current node 
   dNode cnode;
-  for (vector<dNode>::iterator node = nodeList.begin(); node != nodeList.end(); ++node) {
+  
+  /*for (vector<dNode>::iterator node = nodeList.begin(); node != nodeList.end(); ++node) {
       if (!cnode) {
         cnode = node;
       } else if () {
@@ -78,7 +79,7 @@ int dijkstra(Node *origin, Node *dest, Node **path) {
       } else if (cnode->tcost > node->tcost) {
         cnode = node;
       }
-  }
+  }*/
 
 
     // stop if cnode == dest
