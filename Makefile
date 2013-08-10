@@ -14,7 +14,7 @@
 
 # Points to the root of Google Test, relative to where this file is.
 # Remember to tweak this if you move this file.
-GTEST_DIR = /home/nate/Downloads/gtest-1.6.0
+GTEST_DIR = /home/fallingmeat/Downloads/gtest-1.6.0
 
 # Where to find user code.
 SRC_DIR = src
@@ -38,11 +38,9 @@ GTEST_HEADERS = $(GTEST_DIR)/include/gtest/*.h \
                 $(GTEST_DIR)/include/gtest/internal/*.h
 
 # House-keeping build targets.
-
 all: $(TESTS)
 
 # remove all binaries
-
 clean:
 	rm -f $(TESTS) gtest.a gtest_main.a *.o
 
@@ -71,7 +69,6 @@ $(BUILD_DIR)/gtest_main.a: $(BUILD_DIR)/gtest-all.o $(BUILD_DIR)/gtest_main.o | 
 # Builds a sample test.  A test should link with either gtest.a or
 # gtest_main.a, depending on whether it defines its own main()
 # function.
-
 $(BUILD_DIR)/Node.o: $(SRC_DIR)/Node.cpp $(SRC_DIR)/Node.h | $(BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(SRC_DIR)/Node.cpp -o $@
 
@@ -88,6 +85,5 @@ $(BUILD_DIR)/node_test: $(BUILD_DIR)/Node.o $(BUILD_DIR)/Node_test.o $(BUILD_DIR
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -pthread $^ -o $@
 
 # put everything in a separate build directory
-
 $(BUILD_DIR): 
 	mkdir -p $@

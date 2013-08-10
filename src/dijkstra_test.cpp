@@ -19,7 +19,7 @@ TEST(Dijkstra, dijkstra) {
 
   // create mesh
   a->addEdge(b,2);
-  a->addEdge(c,5);
+  a->addEdge(c,1);
   b->addEdge(e,1);
   c->addEdge(d,3);
   c->addEdge(e,1);
@@ -34,7 +34,7 @@ TEST(Dijkstra, dijkstra) {
   int cost = dijkstra(a, f, path);
 
   // did we get the correct cost?
-  EXPECT_EQ(cost, 5);
+  EXPECT_EQ(5, cost);
 
 }
 
@@ -46,7 +46,7 @@ struct dNode {
     int tcost;
     bool visited;
   };
-  
+
 /* Dijkstra's Algorithm
  *
  *  Given an origina and dest, find the cheapest
@@ -66,11 +66,12 @@ int dijkstra(Node *origin, Node *dest, Node **path) {
   dn_origin          = new dNode();
   dn_origin->node    = origin;
   dn_origin->tcost   = 0;
+  dn_origin->tfrom   = NULL;
   dn_origin->visited = false;  
   nodeList.push_back(dn_origin);
 
   // set search limit
-  int search_count = 0, search_limit = 1000;
+  int search_count = 0, search_limit = 50;
 
   // keep looking for the destination
   while(search_count < search_limit) {
@@ -79,11 +80,10 @@ int dijkstra(Node *origin, Node *dest, Node **path) {
     ++search_count;
     
     // 2 find node in nodeList with cheapest tcost which has not been visited, set as current node  
-    // TODO handle unset cost
-    dNode *current_node;
+    dNode *current_node = NULL;
     for (std::vector<dNode*>::iterator node = nodeList.begin(); node != nodeList.end(); ++node) {
-      if (!node->visited && (!current_node->node || current_node->tcost > node->tcost)) {
-          current_node = &*node;
+      if (!(*node)->visited && (current_node == NULL || current_node->tcost > (*node)->tcost)) {
+        current_node = *node;
       }
     }
 
@@ -107,15 +107,15 @@ int dijkstra(Node *origin, Node *dest, Node **path) {
       int tcost = current_node->tcost + current_node->node->getEdgeCost(tdest);
 
       // check if node is in nodeList
-      dNode *tdestDNode;
-      for (std::vector<dNode>::iterator node = nodeList.begin(); node != nodeList.end(); ++node) {
+      dNode *tdestDNode = NULL;
+      for (std::vector<dNode*>::iterator node = nodeList.begin(); node != nodeList.end(); ++node) {
         // check if node is in nodeList, set tdestDNode
-        if (node->node == tdest) { tdestDNode = &*node; }
+        if ((*node)->node == tdest) { tdestDNode = *node; }
       }
 
       // if yes, update tcost/tfrom of dNode if this tcost is lower
-      if (tdestDNode) {
-
+      if (tdestDNode != NULL) {
+        
         if (tcost < tdestDNode->tcost) {
           tdestDNode->tcost = tcost;
           tdestDNode->tfrom = current_node->node;
@@ -143,6 +143,21 @@ int dijkstra(Node *origin, Node *dest, Node **path) {
   }
 
   // output results
+  dNode *cnode = dn_dest;
+  do {
+
+    printf("%s via ", cnode->node->getLabel());
+
+    for(std::vector<dNode*>::iterator node = nodeList.begin(); node != nodeList.end(); ++node) {
+      if (cnode->tfrom == (*node)->node) {
+        cnode = *node;
+        break;
+      }
+    }
+  
+  } while(cnode->tfrom != NULL);
+  printf("%s \n", cnode->node->getLabel());
+
   return dn_dest->tcost;
 
 }
