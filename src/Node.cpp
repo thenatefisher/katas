@@ -217,3 +217,8 @@ void Node::print() {
   }
 
 }
+
+/* get destination node at edge i */
+Node* Node::getEdgeDest(int i) {
+  return outboundEdges[i]->destination;
+}

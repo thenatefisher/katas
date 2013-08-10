@@ -47,7 +47,6 @@ struct dNode {
     bool visited;
   };
   
-
 /* Dijkstra's Algorithm
  *
  *  Given an origina and dest, find the cheapest
@@ -58,47 +57,92 @@ struct dNode {
  */ 
 int dijkstra(Node *origin, Node *dest, Node **path) {
 
-  std::vector<dNode> nodeList;
+  std::vector<dNode*> nodeList;
 
   // convert origin and dest to dNode types
-  dNode dn_origin, dn_dest;
-  dn_origin.node = origin;
-  dn_dest.node = dest;
+  dNode *dn_origin, *dn_dest;
 
   // 1 init nodeList with origin
+  dn_origin          = new dNode();
+  dn_origin->node    = origin;
+  dn_origin->tcost   = 0;
+  dn_origin->visited = false;  
   nodeList.push_back(dn_origin);
 
-  // 2 find node in nodeList with cheapest tcost, set as current node 
-  dNode cnode;
-  
-  /*for (vector<dNode>::iterator node = nodeList.begin(); node != nodeList.end(); ++node) {
-      if (!cnode) {
-        cnode = node;
-      } else if () {
-        //
-      } else if (cnode->tcost > node->tcost) {
-        cnode = node;
+  // set search limit
+  int search_count = 0, search_limit = 1000;
+
+  // keep looking for the destination
+  while(search_count < search_limit) {
+    
+    // inc search count
+    ++search_count;
+    
+    // 2 find node in nodeList with cheapest tcost which has not been visited, set as current node  
+    // TODO handle unset cost
+    dNode *current_node;
+    for (std::vector<dNode*>::iterator node = nodeList.begin(); node != nodeList.end(); ++node) {
+      if (!node->visited && (!current_node->node || current_node->tcost > node->tcost)) {
+          current_node = &*node;
       }
-  }*/
+    }
 
+    // stop if current_node == dest
+    if (current_node->node == dest) { 
+      dn_dest = current_node;
+      break; 
+    }
 
-    // stop if cnode == dest
+    // 3 iterate over all current_node outbound edge nodes
+    for (int i = 0; i < current_node->node->getEdgeCount(); i++) {
 
-  // 3 iterate over all cnode outbound edge nodes
+      // calculate tentative cost to each node
+      if (!current_node->node->getEdgeDest(i)) { 
+        // TODO throw exception 
+        break;
+      }
 
-    // calculate tentative cost to each node
+      // get destination info
+      Node *tdest = current_node->node->getEdgeDest(i);
+      int tcost = current_node->tcost + current_node->node->getEdgeCost(tdest);
 
-    // check if node is in nodeList
+      // check if node is in nodeList
+      dNode *tdestDNode;
+      for (std::vector<dNode>::iterator node = nodeList.begin(); node != nodeList.end(); ++node) {
+        // check if node is in nodeList, set tdestDNode
+        if (node->node == tdest) { tdestDNode = &*node; }
+      }
 
       // if yes, update tcost/tfrom of dNode if this tcost is lower
+      if (tdestDNode) {
 
-      // if no, create dNode and add to observedList
+        if (tcost < tdestDNode->tcost) {
+          tdestDNode->tcost = tcost;
+          tdestDNode->tfrom = current_node->node;
+        }
 
-  // 4 mark cnode as visited, go to step 2
+      } else {
 
+        // if no, create dNode 
+        tdestDNode          = new dNode();
+        tdestDNode->node    = tdest;
+        tdestDNode->tfrom   = current_node->node;
+        tdestDNode->tcost   = tcost;
+        tdestDNode->visited = false;
+
+        // ...and add to nodeList
+        nodeList.push_back(tdestDNode);
+
+      }
+        
+    }
+
+    // 4 mark current_node as visited, go to step 2
+    current_node->visited = true;   
+
+  }
 
   // output results
-  int cost_to_dest;
-  return cost_to_dest;
+  return dn_dest->tcost;
 
 }

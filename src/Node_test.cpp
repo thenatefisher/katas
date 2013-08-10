@@ -15,6 +15,17 @@ TEST(Node, count) {
 
 }
 
+TEST(Node, getEdgeDest) {
+
+  Node *a = new Node("A");
+  Node *b = new Node("B");
+
+  a->addEdge(b,3);
+  Node* dest = a->getEdgeDest(0);
+  EXPECT_EQ(dest, b);
+
+}
+
 TEST(Node, getEdgeCost) {
 
   Node *a = new Node("A");

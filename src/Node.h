@@ -28,6 +28,7 @@ class Node {
     void removeEdge(Node *n);
     int getEdgeCost(Node *n);
     int getEdgeCount();
+    Node* getEdgeDest(int);
     void setLabel(char *l);
     char* getLabel();
     static int count();
