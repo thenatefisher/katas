@@ -4,7 +4,7 @@
 #include <vector>
 
 // fwd declare prototype
-int dijkstra(Node *origin, Node *dest, Node **path);
+int dijkstra(Node *origin, Node *dest, std::vector<Node*> &path);
 
 // run dijkstra test
 TEST(Dijkstra, dijkstra) {
@@ -28,13 +28,20 @@ TEST(Dijkstra, dijkstra) {
   d->addEdge(f,1);
 
   // create pointer for the calculated shortest path
-  Node **path;
+  std::vector<Node*> path;
 
   // run the algo
   int cost = dijkstra(a, f, path);
 
   // did we get the correct cost?
-  EXPECT_EQ(5, cost);
+  EXPECT_EQ(cost, 4);
+
+  // did we get correct path?
+  EXPECT_EQ(path.at(0)->getLabel(), "A");
+  EXPECT_EQ(path.at(1)->getLabel(), "C");
+  EXPECT_EQ(path.at(2)->getLabel(), "E");
+  EXPECT_EQ(path.at(3)->getLabel(), "D");
+  EXPECT_EQ(path.at(4)->getLabel(), "F");
 
 }
 
@@ -55,7 +62,7 @@ struct dNode {
  *  this route returned. 
  *
  */ 
-int dijkstra(Node *origin, Node *dest, Node **path) {
+int dijkstra(Node *origin, Node *dest, std::vector<Node*> &path) {
 
   std::vector<dNode*> nodeList;
 
@@ -146,7 +153,8 @@ int dijkstra(Node *origin, Node *dest, Node **path) {
   dNode *cnode = dn_dest;
   do {
 
-    printf("%s via ", cnode->node->getLabel());
+    // add the current node to path
+    path.insert(path.begin(), cnode->node);
 
     for(std::vector<dNode*>::iterator node = nodeList.begin(); node != nodeList.end(); ++node) {
       if (cnode->tfrom == (*node)->node) {
@@ -156,7 +164,9 @@ int dijkstra(Node *origin, Node *dest, Node **path) {
     }
   
   } while(cnode->tfrom != NULL);
-  printf("%s \n", cnode->node->getLabel());
+
+  // add the origin
+  path.insert(path.begin(), cnode->node);
 
   return dn_dest->tcost;
 

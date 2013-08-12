@@ -14,7 +14,7 @@
 
 # Points to the root of Google Test, relative to where this file is.
 # Remember to tweak this if you move this file.
-GTEST_DIR = /home/fallingmeat/Downloads/gtest-1.6.0
+GTEST_DIR = ../gtest-1.6.0
 
 # Where to find user code.
 SRC_DIR = src
@@ -79,10 +79,10 @@ $(BUILD_DIR)/dijkstra_test.o: $(SRC_DIR)/dijkstra_test.cpp $(SRC_DIR)/Node.h $(G
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(SRC_DIR)/dijkstra_test.cpp -o $@
 
 $(BUILD_DIR)/dijkstra_test: $(BUILD_DIR)/Node.o $(BUILD_DIR)/dijkstra_test.o $(BUILD_DIR)/gtest_main.a | $(BUILD_DIR)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -pthread $^ -o $@
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
 
 $(BUILD_DIR)/node_test: $(BUILD_DIR)/Node.o $(BUILD_DIR)/Node_test.o $(BUILD_DIR)/gtest_main.a | $(BUILD_DIR)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -pthread $^ -o $@
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
 
 # put everything in a separate build directory
 $(BUILD_DIR): 
