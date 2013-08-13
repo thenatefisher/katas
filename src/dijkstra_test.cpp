@@ -4,18 +4,18 @@
 #include <vector>
 
 // fwd declare prototype
-int dijkstra(Node *origin, Node *dest, std::vector<Node*> &path);
+int dijkstra(Dijkstra_node *origin, Dijkstra_node *dest, std::vector<Dijkstra_node*> &path);
 
 // run dijkstra test
 TEST(Dijkstra, dijkstra) {
 
   // create nodes
-  Node *a = new Node("A");  
-  Node *b = new Node("B");  
-  Node *c = new Node("C");
-  Node *d = new Node("D");
-  Node *e = new Node("E");
-  Node *f = new Node("F");
+  Dijkstra_node *a = new Dijkstra_node("A");  
+  Dijkstra_node *b = new Dijkstra_node("B");  
+  Dijkstra_node *c = new Dijkstra_node("C");
+  Dijkstra_node *d = new Dijkstra_node("D");
+  Dijkstra_node *e = new Dijkstra_node("E");
+  Dijkstra_node *f = new Dijkstra_node("F");
 
   // create mesh
   a->addEdge(b,2);
@@ -28,7 +28,7 @@ TEST(Dijkstra, dijkstra) {
   d->addEdge(f,1);
 
   // create pointer for the calculated shortest path
-  std::vector<Node*> path;
+  std::vector<Dijkstra_node*> path;
 
   // run the algo
   int cost = dijkstra(a, f, path);
@@ -46,14 +46,6 @@ TEST(Dijkstra, dijkstra) {
 }
 
 
-/* augemnting the node class a bit for the algorithm */
-struct dNode {
-    Node *node;
-    Node *tfrom;
-    int tcost;
-    bool visited;
-  };
-
 /* Dijkstra's Algorithm
  *
  *  Given an origina and dest, find the cheapest
@@ -62,15 +54,15 @@ struct dNode {
  *  this route returned. 
  *
  */ 
-int dijkstra(Node *origin, Node *dest, std::vector<Node*> &path) {
+int dijkstra(Dijkstra_node *origin, Dijkstra_node *dest, std::vector<Dijkstra_node*> &path) {
 
-  std::vector<dNode*> nodeList;
+  std::vector<Dijkstra_node*> nodeList;
 
   // convert origin and dest to dNode types
-  dNode *dn_origin, *dn_dest;
+  Dijkstra_node *dn_origin, *dn_dest;
 
   // 1 init nodeList with origin
-  dn_origin          = new dNode();
+  dn_origin          = new Dijkstra_node();
   dn_origin->node    = origin;
   dn_origin->tcost   = 0;
   dn_origin->tfrom   = NULL;
@@ -87,7 +79,7 @@ int dijkstra(Node *origin, Node *dest, std::vector<Node*> &path) {
     ++search_count;
     
     // 2 find node in nodeList with cheapest tcost which has not been visited, set as current node  
-    dNode *current_node = NULL;
+    Dijkstra_node *current_node = NULL;
     for (std::vector<dNode*>::iterator node = nodeList.begin(); node != nodeList.end(); ++node) {
       if (!(*node)->visited && (current_node == NULL || current_node->tcost > (*node)->tcost)) {
         current_node = *node;

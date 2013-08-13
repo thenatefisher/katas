@@ -84,6 +84,9 @@ $(BUILD_DIR)/dijkstra_test: $(BUILD_DIR)/Node.o $(BUILD_DIR)/dijkstra_test.o $(B
 $(BUILD_DIR)/node_test: $(BUILD_DIR)/Node.o $(BUILD_DIR)/Node_test.o $(BUILD_DIR)/gtest_main.a | $(BUILD_DIR)
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
 
+$(BUILD_DIR)/sort_test: $(SRC_DIR)/sort_test.cpp $(BUILD_DIR)/gtest_main.a | $(BUILD_DIR)
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+    
 # put everything in a separate build directory
 $(BUILD_DIR): 
 	mkdir -p $@
