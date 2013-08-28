@@ -14,7 +14,7 @@
 
 # Points to the root of Google Test, relative to where this file is.
 # Remember to tweak this if you move this file.
-GTEST_DIR = ../gtest-1.6.0
+GTEST_DIR = /home/nate/Downloads/gtest-1.6.0
 
 # Where to find user code.
 SRC_DIR = src
@@ -55,10 +55,10 @@ GTEST_SRCS_ = $(GTEST_DIR)/src/*.cc $(GTEST_DIR)/src/*.h $(GTEST_HEADERS)
 # conservative and not optimized.  This is fine as Google Test
 # compiles fast and for ordinary users its source rarely changes.
 $(BUILD_DIR)/gtest-all.o: $(GTEST_SRCS_) | $(BUILD_DIR)
-	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c $(GTEST_DIR)/src/gtest-all.cc -o $@
+	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -pthread -c $(GTEST_DIR)/src/gtest-all.cc -o $@
 
 $(BUILD_DIR)/gtest_main.o: $(GTEST_SRCS_) | $(BUILD_DIR)
-	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -c $(GTEST_DIR)/src/gtest_main.cc -o $@
+	$(CXX) $(CPPFLAGS) -I$(GTEST_DIR) $(CXXFLAGS) -pthread -c $(GTEST_DIR)/src/gtest_main.cc -o $@
 
 $(BUILD_DIR)/gtest.a: $(BUILD_DIR)/gtest-all.o | $(BUILD_DIR)
 	$(AR) $(ARFLAGS) $@ $^ 
@@ -70,22 +70,22 @@ $(BUILD_DIR)/gtest_main.a: $(BUILD_DIR)/gtest-all.o $(BUILD_DIR)/gtest_main.o | 
 # gtest_main.a, depending on whether it defines its own main()
 # function.
 $(BUILD_DIR)/Node.o: $(SRC_DIR)/Node.cpp $(SRC_DIR)/Node.h | $(BUILD_DIR)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(SRC_DIR)/Node.cpp -o $@
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -pthread -c $(SRC_DIR)/Node.cpp -o $@
 
 $(BUILD_DIR)/Node_test.o: $(SRC_DIR)/Node_test.cpp $(SRC_DIR)/Node.h $(GTEST_HEADERS) | $(BUILD_DIR)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(SRC_DIR)/Node_test.cpp -o $@
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -pthread -c $(SRC_DIR)/Node_test.cpp -o $@
 
 $(BUILD_DIR)/dijkstra_test.o: $(SRC_DIR)/dijkstra_test.cpp $(SRC_DIR)/Node.h $(GTEST_HEADERS) | $(BUILD_DIR)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $(SRC_DIR)/dijkstra_test.cpp -o $@
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -pthread -c $(SRC_DIR)/dijkstra_test.cpp -o $@
 
 $(BUILD_DIR)/dijkstra_test: $(BUILD_DIR)/Node.o $(BUILD_DIR)/dijkstra_test.o $(BUILD_DIR)/gtest_main.a | $(BUILD_DIR)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -pthread $^ -o $@
 
 $(BUILD_DIR)/node_test: $(BUILD_DIR)/Node.o $(BUILD_DIR)/Node_test.o $(BUILD_DIR)/gtest_main.a | $(BUILD_DIR)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -pthread $^ -o $@
 
 $(BUILD_DIR)/sort_test: $(SRC_DIR)/sort_test.cpp $(BUILD_DIR)/gtest_main.a | $(BUILD_DIR)
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $^ -o $@
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -pthread $^ -o $@
     
 # put everything in a separate build directory
 $(BUILD_DIR): 
