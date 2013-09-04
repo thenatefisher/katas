@@ -65,6 +65,7 @@ vector<int> solution(const vector<int> &A) {
     
         int min_asc_dist = A.size();
         int index = i - A.begin();
+        
         int dist = 1;
         int lcompare_index = index + dist * -1;
         int rcompare_index = index + dist;
@@ -73,16 +74,14 @@ vector<int> solution(const vector<int> &A) {
         
             // if there is a left ascender       
             if (lcompare_index >= 0 && (A.at(lcompare_index) > *i)) {
-                if (dist < min_asc_dist)
-                    min_asc_dist = dist;
-                    break;
+                min_asc_dist = dist;
+                break;
             }
             
             // if there is a right ascender
             if (rcompare_index < A.size() && (A.at(rcompare_index) > *i)) {
-                if (dist < min_asc_dist)
-                    min_asc_dist = dist;
-                    break;
+                min_asc_dist = dist;
+                break;
             }
 
             dist++;

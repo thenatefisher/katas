@@ -59,7 +59,7 @@ void resetInput() {
 
     for(double i = 0; i < INPUT_SIZE; i++) {
     
-      int iSecret, iGuess;
+      int iSecret;
 
       /* initialize random seed: */
       srand (time(NULL));
